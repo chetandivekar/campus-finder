@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "SFProDispaly";
+  font-weight: 300;
+  src: url("../public/assets/fonts/sfprodisplayregular-webfont.woff2")
+      format("woff2"),
+    url("../public/assets/fonts/sfprodisplayregular-webfont.woff")
+      format("woff");
+}
+@font-face {
+  font-family: "SFProDispaly";
+  font-weight: 400;
+  src: url("../public/assets/fonts/sfprodisplaymedium-webfont.woff2")
+      format("woff2"),
+    url("../public/assets/fonts/sfprodisplaymedium-webfont.woff2")
+      format("woff");
+}
+
+@font-face {
+  font-family: "SFProDispaly";
+  font-weight: 500;
+  src: url("../public/assets/fonts/sfprodisplaybold-webfont.woff2")
+      format("woff2"),
+    url("../public/assets/fonts/sfprodisplaybold-webfont.woff") format("woff");
+}

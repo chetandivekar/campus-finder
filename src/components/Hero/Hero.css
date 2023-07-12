@@ -1,0 +1,86 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+
+.hero-main {
+  width: 100vw;
+  /* background-color: red; */
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero {
+  /* border: 5px solid black; */
+  margin: 4rem 0 0 0;
+  display: flex;
+  justify-content: space-between;
+  width: 59.375rem;
+  height: 16.375rem;
+}
+.hero__left img {
+  width: 9.3125rem;
+  height: 9.3125rem;
+  flex-shrink: 0;
+  margin: 50% 0 0 0;
+}
+
+.hero__right img {
+  width: 9.375rem;
+  height: 9.375rem;
+  flex-shrink: 0;
+}
+
+.hero__middle .heading {
+  font-family: SFProDispaly;
+  font-weight: 400;
+  font-size: 3.6225rem;
+  font-size: 3.5rem;
+  text-align: center;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.hero__middle .sub-heading {
+  font-family: "Inter", sans-serif;
+  color: #6d6d6d;
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.button button {
+  background-color: #ffd700;
+  width: 6.5625rem;
+  height: 2.4375rem;
+  flex-shrink: 0;
+  border-radius: 0.4375rem;
+  color: #000;
+  font-family: SFProDispaly;
+  font-size: 1.25rem;
+  text-align: center;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  width: 33.5625rem;
+  height: 3.75rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  border: 2px solid #000;
+  background: #fff;
+  margin: 3rem 0 0 0;
+}
+
+input::placeholder {
+  color: #444;
+  font-family: SFProDispaly;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
