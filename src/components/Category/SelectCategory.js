@@ -46,7 +46,7 @@ const SelectCategory = () => {
       </div>
     </div>
     <div>
-
+</div>
     </div>
   )
 }
