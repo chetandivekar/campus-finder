@@ -68,5 +68,13 @@
        height: 120vh;
        width: 100%;
        align-items: center;
+       justify-content: space-around;
     }
+    .card{
+      display: flex;
+      flex-direction: row;
+      height: 5rem;
+      width: 100%;
+    }
+
   }

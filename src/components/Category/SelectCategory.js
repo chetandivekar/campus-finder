@@ -17,7 +17,7 @@ const SelectCategory = () => {
       <h3>For You</h3>
       </div>
       <div className="card__button">
-      <button className='btn' type='button'>Explore School</button>
+      <button className='btn' type='button'><span>Explore School</span></button>
       </div>
       </div>
       <div className="card">
@@ -29,7 +29,7 @@ const SelectCategory = () => {
       <h3>For You</h3>
       </div>
       <div className="card__button">
-      <button className='btn' type='button'>Explore College</button>
+      <button className='btn' type='button'> <span>Explore College</span></button>
       </div>
       </div>
       <div className="card">
@@ -41,7 +41,7 @@ const SelectCategory = () => {
       <h3>For You</h3>
       </div>
       <div className="card__button">
-      <button className='btn' type='button'>Explore Investors</button>
+      <button className='btn' type='button'><span>Explore Investors</span></button>
       </div>
       </div>
     </div>
