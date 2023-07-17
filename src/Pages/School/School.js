@@ -436,6 +436,7 @@ const School = () => {
               </div>
             </div>
           </div>
+
           <div className="school-main">
             {/* <div className="school-search">
             <h1>Search School</h1>
@@ -451,7 +452,30 @@ const School = () => {
                 />
                 <div className="src-button"><button>Search</button></div>
                 
+
+          </div>
+        </div>
+        </div>
+        <div className="school-main">
+        <div className="search">
+            <div className="heading">Search Colleges</div>
+            <div className="inputs">
+              <div>
+                <img src="" alt="" />
+
               </div>
+              <input
+                type="text"
+                value=""
+                onChange=""
+                // onKeyPress={(event) => {
+                //   if (event.key === "Enter") {
+                //     filterColleges();
+                //   }
+                // }}
+                placeholder="Search..."
+              />
+              <button>Search</button>
             </div>
           </div> */}
             <div className="school-result">
@@ -590,6 +614,131 @@ const School = () => {
                 </div>
               </div>
             </div>
+
+          </div>
+          <div className="school-result">
+          <div className="school-result__rank">
+          <div className="rank__number">1</div>
+          <div className="rank__city">(Mumbai)</div>
+          </div>
+          <div className="school-result__img">
+          <img src={schoollogo} alt="School logo" srcset="" />
+          </div>
+          <div className="school-result__details">
+          <div className="school-name"><span>St Fransis D'Assisi High School</span></div>
+          <div className="school-shortdetail">
+          <div className="shortdetal__location">
+          <i class="fa-solid fa-location-dot"></i><span>Borivali, Mumbai</span>
+          </div>
+          <div className="seprator"></div>
+          <div className="school__rating">
+          <span>rating 4</span>
+          </div>
+          <div className="seprator"></div>
+          <div className="school__fees">
+          <span>50K - 1L</span>
+          </div>
+          </div>
+          <div className="school-board">
+          <h1>Board : State , CBSC , ICSC</h1>
+          <div className="visitschool">
+          <button type="button">Visit School</button>
+          </div>
+          </div>
+          </div>
+          </div>
+          <div className="school-result">
+          <div className="school-result__rank">
+          <div className="rank__number">1</div>
+          <div className="rank__city">(Mumbai)</div>
+          </div>
+          <div className="school-result__img">
+          <img src={schoollogo} alt="School logo" srcset="" />
+          </div>
+          <div className="school-result__details">
+          <div className="school-name"><span>St Fransis D'Assisi High School</span></div>
+          <div className="school-shortdetail">
+          <div className="shortdetal__location">
+          <i class="fa-solid fa-location-dot"></i><span>Borivali, Mumbai</span>
+          </div>
+          <div className="seprator"></div>
+          <div className="school__rating">
+          <span>rating 4</span>
+          </div>
+          <div className="seprator"></div>
+          <div className="school__fees">
+          <span>50K - 1L</span>
+          </div>
+          </div>
+          <div className="school-board">
+          <h1>Board : State , CBSC , ICSC</h1>
+          <div className="visitschool">
+          <button type="button">Visit School</button>
+          </div>
+          </div>
+          </div>
+          </div>
+          <div className="school-result">
+          <div className="school-result__rank">
+          <div className="rank__number">1</div>
+          <div className="rank__city">(Mumbai)</div>
+          </div>
+          <div className="school-result__img">
+          <img src={schoollogo} alt="School logo" srcset="" />
+          </div>
+          <div className="school-result__details">
+          <div className="school-name"><span>St Fransis D'Assisi High School</span></div>
+          <div className="school-shortdetail">
+          <div className="shortdetal__location">
+          <i class="fa-solid fa-location-dot"></i><span>Borivali, Mumbai</span>
+          </div>
+          <div className="seprator"></div>
+          <div className="school__rating">
+          <span>rating 4</span>
+          </div>
+          <div className="seprator"></div>
+          <div className="school__fees">
+          <span>50K - 1L</span>
+          </div>
+          </div>
+          <div className="school-board">
+          <h1>Board : State , CBSC , ICSC</h1>
+          <div className="visitschool">
+          <button type="button">Visit School</button>
+          </div>
+          </div>
+          </div>
+          </div>
+          <div className="school-result">
+          <div className="school-result__rank">
+          <div className="rank__number">1</div>
+          <div className="rank__city">(Mumbai)</div>
+          </div>
+          <div className="school-result__img">
+          <img src={schoollogo} alt="School logo" srcset="" />
+          </div>
+          <div className="school-result__details">
+          <div className="school-name"><span>St Fransis D'Assisi High School</span></div>
+          <div className="school-shortdetail">
+          <div className="shortdetal__location">
+          <i class="fa-solid fa-location-dot"></i><span>Borivali, Mumbai</span>
+          </div>
+          <div className="seprator"></div>
+          <div className="school__rating">
+          <span>rating 4</span>
+          </div>
+          <div className="seprator"></div>
+          <div className="school__fees">
+          <span>50K - 1L</span>
+          </div>
+          </div>
+          <div className="school-board">
+          <h1>Board : State , CBSC , ICSC</h1>
+          <div className="visitschool">
+          <button type="button">Visit School</button>
+          </div>
+          </div>
+          </div>
           </div>
         </div>
       </div>
