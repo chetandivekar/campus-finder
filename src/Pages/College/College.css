@@ -1,5 +1,10 @@
+html {
+  font-size: 16px;
+}
+
 body {
   background-color: #f3f2ef;
+  font-size: 1rem;
 }
 
 .main {
@@ -234,7 +239,7 @@ body {
   line-height: normal;
 }
 
-.collge-name {
+.college-card .collge-info .collge-name {
   color: #000;
   font-family: SFProDispaly;
   font-size: 1.25rem;
@@ -326,6 +331,25 @@ input::placeholder {
   margin-right: 0.5rem;
 }
 
+/* image */
 .search img {
   margin-left: 0.5rem;
+}
+
+@media only screen and (max-width: 1306px) {
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    background-color: #f3f2ef;
+    font-size: 1rem;
+  }
+
+  .main-college {
+    width: 75%;
+  }
+  .college-component {
+    width: 75%;
+  }
 }

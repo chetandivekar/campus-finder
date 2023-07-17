@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./College.css";
 import Clear from "./collegeImages/clear.svg";
 import Location from "./collegeImages/location.svg";
 import Dot from "./collegeImages/dot.svg";
 import Search from "./collegeImages/search.svg";
+import { useCollegeContext } from "../../context/collegeContext";
+import { Link } from "react-router-dom";
 
 export default function College() {
+  const colleges = useCollegeContext();
+
+  // const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedOwnership, setSelectedOwnership] = useState("");
   const [selectedFees, setSelectedFees] = useState("");
@@ -17,25 +22,126 @@ export default function College() {
   const [isSpecializationExpanded, setIsSpecializationExpanded] =
     useState(true);
   const [isExamExpanded, setIsExamExpanded] = useState(true);
+  const [filteredColleges, setFilteredColleges] = useState(colleges);
+  const [searchQuery, setSearchQuery] = useState("");
+  // const filterColleges = () => {
+  //   let filtered = colleges;
+
+  //   if (selectedLocation.length > 0) {
+  //     filtered = filtered.filter(
+  //       (college) =>
+  //         college.Location &&
+  //         college.Location.toLowerCase().includes(
+  //           selectedLocation.toLowerCase()
+  //         )
+  //     );
+  //   }
+
+  //   setFilteredColleges(filtered);
+  // };
+
+  // const handleLocationChange = (event) => {
+  //   const { value } = event.target;
+  //   setSelectedLocation(value);
+  // };
+
+  // useEffect(() => {
+  //   filterColleges();
+  // }, [selectedLocation]);
+
+  const filterColleges = () => {
+    let filtered = colleges;
+
+    // Filter by location
+    if (selectedLocation.length > 0) {
+      filtered = filtered.filter(
+        (college) =>
+          college.Location &&
+          college.Location.toLowerCase().includes(
+            selectedLocation.toLowerCase()
+          )
+      );
+    }
+
+    // Filter by fees range
+    if (selectedFees.length > 0) {
+      filtered = filtered.filter((college) => {
+        if (college["Course Offered"]) {
+          const courseFees = parseInt(
+            college["Course Offered"][0].replace(/,/g, "")
+          );
+          const [lowerRange, upperRange] = selectedFees.split("-");
+
+          if (selectedFees === "1 Lakh") {
+            return courseFees < 100000;
+          } else if (selectedFees === "6 Lakh") {
+            return courseFees > 600000;
+          } else if (upperRange) {
+            return (
+              courseFees >= parseInt(lowerRange) * 100000 &&
+              courseFees <= parseInt(upperRange) * 100000
+            );
+          }
+        }
+        return false;
+      });
+    }
+
+    //Filter by ownership
+    if (selectedOwnership.length > 0) {
+      filtered = filtered.filter(
+        (college) =>
+          college.Ownership &&
+          college.Ownership.toLowerCase() === selectedOwnership.toLowerCase()
+      );
+    }
+
+    // Filter by search query
+    if (searchQuery.length > 0) {
+      filtered = filtered.filter((college) =>
+        college.Name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    setFilteredColleges(filtered);
+  };
 
   const handleLocationChange = (event) => {
     const { value } = event.target;
-    setSelectedLocation((prevSelected) =>
-      prevSelected === value ? "" : value
-    );
+    setSelectedLocation(value);
   };
+
+  const handleSearchChange = (event) => {
+    const { value } = event.target;
+    setSearchQuery(value);
+  };
+  const handleFeesChange = (event) => {
+    const { value } = event.target;
+    setSelectedFees(value);
+    console.log(value);
+  };
+
+  useEffect(() => {
+    filterColleges();
+  }, [selectedLocation, selectedFees, selectedOwnership]);
 
   const handleOwnershipChange = (event) => {
     const { value } = event.target;
-    setSelectedOwnership((prevSelected) =>
-      prevSelected === value ? "" : value
-    );
+    setSelectedOwnership(value);
+    console.log(value);
   };
 
-  const handleFeesChange = (event) => {
-    const { value } = event.target;
-    setSelectedFees((prevSelected) => (prevSelected === value ? "" : value));
-  };
+  // const handleOwnershipChange = (event) => {
+  //   const { value } = event.target;
+  //   setSelectedOwnership((prevSelected) =>
+  //     prevSelected === value ? "" : value
+  //   );
+  // };
+
+  // const handleFeesChange = (event) => {
+  //   const { value } = event.target;
+  //   setSelectedFees((prevSelected) => (prevSelected === value ? "" : value));
+  // };
 
   const handleSpecializationChange = (event) => {
     const { value } = event.target;
@@ -157,12 +263,6 @@ export default function College() {
     setIsExamExpanded(true);
   };
 
-  const filterColleges = () => {
-    // Implement your logic to filter colleges based on the selected filters
-    // You can use the selectedLocation, selectedOwnership, selectedFees, selectedSpecialization, and selectedExam variables to apply the filters
-    // You can store the filtered colleges in a state variable and display them in the college-list section
-  };
-
   return (
     <div className="main">
       <div className="college-component">
@@ -171,20 +271,20 @@ export default function College() {
             <div className="filter-text">
               <div className="text">FILTERS</div>
 
-              <div className="clear-filters">
-                {selectedOwnership ||
-                selectedLocation ||
-                selectedFees ||
-                selectedSpecialization ||
-                selectedExam ? (
-                  <div onClick={clearAll} className="clear-button">
+              {selectedOwnership ||
+              selectedLocation ||
+              selectedFees ||
+              selectedSpecialization ||
+              selectedExam ? (
+                <div onClick={clearAll} className="clear-filters">
+                  <div className="clear-button">
                     <div className="clear-text">Clear All</div>
                     <div className="clear-png">
                       <img src={Clear} alt="" />
                     </div>
                   </div>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
             </div>
             <div className="selected-filters">
               {selectedOwnership ||
@@ -302,14 +402,14 @@ export default function College() {
                           <div className="option">
                             <input
                               type="checkbox"
-                              id="thane"
+                              id="palghar"
                               name="location"
-                              value="Thane"
-                              checked={selectedLocation === "Thane"}
+                              value="Palghar"
+                              checked={selectedLocation === "Palghar"}
                               onChange={handleLocationChange}
                             />
-                            <label htmlFor="thane" className="checkbox-label">
-                              Thane
+                            <label htmlFor="palghar" className="checkbox-label">
+                              Palghar
                             </label>
                           </div>
                         </div>
@@ -318,6 +418,7 @@ export default function College() {
                   </div>
                 </div>
               </div>
+
               <div className="line"></div>
               <div className="fees">
                 <div>
@@ -346,7 +447,7 @@ export default function College() {
                               onChange={handleFeesChange}
                             />
                             <label htmlFor="fees-1" className="checkbox-label">
-                              1 Lakh
+                              &lt; 1 Lakh
                             </label>
                           </div>
                           <div className="option">
@@ -398,7 +499,7 @@ export default function College() {
                               onChange={handleFeesChange}
                             />
                             <label htmlFor="fees-5" className="checkbox-label">
-                              6 Lakh
+                              &gt; 6 Lakh
                             </label>
                           </div>
                         </div>
@@ -570,661 +671,87 @@ export default function College() {
               <div>
                 <img src={Search} alt="" />
               </div>
-              <input type="text" placeholder="Search..." />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    filterColleges();
+                  }
+                }}
+                placeholder="Search..."
+              />
               <button onClick={filterColleges}>Search</button>
             </div>
           </div>
-          <div className="college-list">
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
 
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
+          <div className="college-list">
+            {filteredColleges.length > 0 ? (
+              filteredColleges.map((college, index) => (
+                <div className="college-card" key={index}>
+                  <div className="rank">
+                    <div className="rank-ranks">{index + 1}</div>
+                    <div className="rank-ranking-institute">
+                      <div>NIRF '23</div>
+                      <div>(All India)</div>
                     </div>
                   </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
+                  <div className="image">
+                    <img
+                      src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
+                      alt="college_logo"
+                    />
                   </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
+                  <div className="collge-info">
+                    <div className="collge-name">{college.Name}</div>
+                    <div className="info-two">
+                      <div className="locations">
+                        <div className="img">
+                          <img src={Location} alt="location" />
+                        </div>
+                        <div className="address">{college.Location}</div>
+                      </div>
+                      <div className="verticalline">|</div>
+                      <div className="rating">
+                        <div className="rate">{college.Rating}</div>
+                        <div className="star-rating">
+                          {Array.from(
+                            { length: Math.floor(college.Rating) },
+                            (_, i) => (
+                              <span className="star" key={i}></span>
+                            )
+                          )}
+                        </div>
+                      </div>
+                      <div className="verticalline">|</div>
+                      <div className="college-fees">
+                        <span>Fees:</span> ₹ {college["Course Offered"][0]}
+                      </div>
                     </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
+                    <div className="info-three">
+                      <div className="salary">
+                        <span>Salary:</span> ₹ {college.Salary}
+                      </div>
+                    </div>
+                    <div className="info-four">
+                      <div className="admission">Admission</div>
+                      <div className="dot">
+                        <img src={Dot} alt="dot" />
+                      </div>
+                      <div className="coursesandfees">Courses & Fees</div>
+                      <div className="dot">
+                        <img src={Dot} alt="dot" />
+                      </div>
+                      <div className="placement">Placement</div>
                     </div>
                   </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
+                  <Link to={`/colleges/${college.Name}`}>Hello</Link>
                 </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
-            <div className="college-card">
-              <div className="rank">
-                <div className="rank-ranks">1</div>
-                <div className="rank-ranking-institute">
-                  <div>NIRF' 23</div>
-                  <div>(All India)</div>
-                </div>
-              </div>
-              <div className="image">
-                <img
-                  src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg"
-                  alt="college_logo"
-                />
-              </div>
-              <div className="collge-info">
-                <div className="collge-name">
-                  IIT Bombay- Indian Institute ofTechnology
-                </div>
-                <div className="info-two">
-                  <div className="locations">
-                    <div className="img">
-                      <img src={Location} alt="location" />
-                    </div>
-                    <div className="address">Powai, Mumbai</div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="rating">
-                    <div className="rate">4.0</div>
-                    <div className="star-rating">
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>
-                      <span class="star"></span>s
-                    </div>
-                  </div>
-                  <div className="verticalline">|</div>
-                  <div className="college-fees">
-                    <span>Fees:</span> ₹ 8.00 Lakh
-                  </div>
-                </div>
-                <div className="info-three">
-                  <div className="salary">
-                    <span>Salary:</span>₹ 15.00 Lakh
-                  </div>
-                </div>
-                <div className="info-four">
-                  <div className="admission">Admission</div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <div className="coursesandfees">Courses & Fees </div>
-                  <div className="dot">
-                    <img src={Dot} alt="dot" />
-                  </div>
-                  <dic className="placement">Placement</dic>
-                </div>
-              </div>
-            </div>
+              ))
+            ) : (
+              <p>No colleges found.</p>
+            )}
           </div>
         </div>
       </div>
