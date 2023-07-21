@@ -279,6 +279,8 @@ hr {
 }
 .faq {
   width: 67.6875rem;
+  background-color: white;
+  border-radius: 1rem;
 }
 .identity h1 {
   color: #000;

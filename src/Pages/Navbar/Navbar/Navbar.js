@@ -16,7 +16,11 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 function Navbar() {
+
   const [filteredColleges] = useState([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [userDetails, setUserDetails] = useState({});
   const [setBookMarkCollege] = useState([]);
   // const [bookMarkLength, setbookMarkLength] = useState(0);
@@ -97,6 +101,18 @@ function Navbar() {
   const avatarURL = userDetails?.avatar;
   // console.log(avatarURL);
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // const handleSignOut = () => {
+  //   // Your sign out logic here
+  // };
+
   return (
     <Disclosure as="nav" style={{ backgroundColor: "#0F0C2D" }}>
       {({ open }) => (
@@ -170,7 +186,7 @@ function Navbar() {
                     </button>
                   </Link>
                   {/* Profile dropdown */}
-                  <Menu as="div" className="relative ml-3">
+                  {/* <Menu as="div" className="relative ml-3">
                     <div>
                       <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="sr-only">Open user menu</span>
@@ -232,7 +248,76 @@ function Navbar() {
                         </Menu.Item>
                       </Menu.Items>
                     </Transition>
-                  </Menu>
+                  </Menu> */}
+                   <div className="relative ml-3">
+      <div>
+        <Menu>
+          <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+            <span className="sr-only">Open user menu</span>
+            <img className="h-8 w-8 rounded-full" src={avatarURL} alt="avatar" />
+          </Menu.Button>
+          {isModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black opacity-50" onClick={closeModal}></div>
+              <div className="absolute z-10 w-80 bg-white p-4 rounded-md shadow-lg">
+                <h2 className="text-xl font-bold mb-4">user1</h2>
+                <p className="text-gray-700 mb-4">useremail</p>
+                <img className="h-40 w-40 rounded-full mx-auto" src={avatarURL} alt="avatar" />
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={handleSignOut}
+                    className="px-4 py-2 text-sm text-white bg-red-500 rounded"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  onClick={openModal}
+                  className={classNames(
+                    active ? "bg-gray-100" : "",
+                    "block px-4 py-2 text-sm text-gray-700 w-full text-left"
+                  )}
+                >
+                  Your Profile
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <Link
+                  to="/"
+                  className={classNames(
+                    active ? "bg-gray-100" : "",
+                    "block px-4 py-2 text-sm text-gray-700 w-full text-left"
+                  )}
+                >
+                  Settings
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  onClick={handleSignOut}
+                  className={classNames(
+                    "block px-4 py-2 text-sm text-gray-700 w-full text-left",
+                    active ? "bg-gray-100" : ""
+                  )}
+                >
+                  Sign out
+                </button>
+              )}
+            </Menu.Item>
+          </Menu.Items>
+        </Menu>
+      </div>
+    </div>
                 </div>
               </div>
             </div>

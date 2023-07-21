@@ -10,6 +10,7 @@ import Singup from "./Pages/Signup/Signup";
 import Investor from "./Pages/Investor/Investor";
 import { SkeletonTheme } from "react-loading-skeleton";
 import Institute from "./Pages/Institute/Institute";
+import SingleSchool from "./Pages/Singleschool/SingleSchool";
 
 import Bookmark from "./Pages/Bookmark/Bookmark";
 
@@ -53,6 +54,14 @@ function App() {
 
           <Route path="/colleges/:collegeName" element={<SingleCollege />} /> //
           Add the new route for the single college page
+
+          <Route path="/colleges/:collegeName" element={<SingleCollege />} /> 
+          Add the new route for the single college page
+          <Route path="/institute" element={<Institute/>} />
+          <Route path="/singleschool" element={<SingleSchool/>} />
+          <Route path="/login" element={<Login/>} />
+          <Route path="/signup" element={<Singup/>} />
+
 
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Singup />} />
