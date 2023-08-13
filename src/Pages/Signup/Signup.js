@@ -18,11 +18,11 @@ const Singup = () => {
   };
 
   let Navigate = useNavigate();
-  const host = "http://localhost:4080";
-
+  const host = "http://localhost:";
+  const port = process.env.REACT_APP_PORT;
   const signupSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${host}/api/newuser`, {
+    const response = await fetch(`${host}${port}/api/newuser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

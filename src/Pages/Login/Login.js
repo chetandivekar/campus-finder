@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 const Login = () => {
-  const host = "http://localhost:4080";
+  const host = "http://localhost:";
+  const port = process.env.REACT_APP_PORT;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
@@ -12,7 +13,7 @@ const Login = () => {
   let Navigate = useNavigate();
   const loginSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${host}/api/login`, {
+    const response = await fetch(`${host}${port}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

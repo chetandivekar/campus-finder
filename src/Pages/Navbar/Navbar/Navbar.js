@@ -17,81 +17,12 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 function Navbar() {
-
-  const [filteredColleges, setSetFilteredColleges] = useState([]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [userDetails, setUserDetails] = useState({});
   const [bookMarkCollege, setBookMarkCollege] = useState([]);
   // const [bookMarkLength, setbookMarkLength] = useState(0);
-  const host = "http://localhost:4080";
-  const { bookMarkLength, setBookMarkLength } = useBookmarkContext();
-
-  useEffect(() => {
-    setBookMarkLength(bookMarkCollege.length);
-  }, [bookMarkCollege]);
-
-  useEffect(() => {
-    const fetchBookmarkedColleges = async () => {
-      try {
-        const token = Cookies.get("token");
-        const response = await fetch("http://localhost:4080/api/collegecart", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            token: token,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-
-          setBookMarkCollege(data.savedColleges);
-        } else {
-          console.error("Error fetching bookmarked colleges");
-          // Handle the case where the API call was not successful
-        }
-      } catch (error) {
-        console.error("Error fetching bookmarked colleges:", error);
-      }
-    };
-
-    fetchBookmarkedColleges();
-  }, [bookMarkCollege]);
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const token = Cookies.get("token");
-        console.log(token);
-        if (!token) {
-          console.log("No token found");
-          return;
-        }
-        const response = await fetch(`${host}/api/users/getUserDetails`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            token: token,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log("data", data);
-          setUserDetails(data.data);
-        } else {
-          console.log("Error fetching user details");
-        }
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
-    };
-
-    if (!userDetails || !userDetails.name) {
-      fetchUserDetails();
-    }
-  }, []);
+  const { bookMarkLength } = useBookmarkContext();
 
   let Navigate = useNavigate();
   const handleSignOut = () => {
@@ -110,7 +41,7 @@ function Navbar() {
     setIsModalOpen(false);
   };
   const handleOutsideClick = (event) => {
-    if (event.target.classList.contains('modal-overlay')) {
+    if (event.target.classList.contains("modal-overlay")) {
       closeModal();
     }
   };

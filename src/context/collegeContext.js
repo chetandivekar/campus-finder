@@ -5,9 +5,11 @@ const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
   const [colleges, setColleges] = useState([]);
+  const host = process.env.REACT_APP_HOST;
+  const port = process.env.REACT_APP_PORT;
 
   useEffect(() => {
-    fetch("http://localhost:4080/api/colleges")
+    fetch(`http://${host}:${port}/api/colleges`)
       .then((response) => response.json())
       .then((data) => setColleges(data))
       .catch((error) => console.error("Error fetching colleges:", error));

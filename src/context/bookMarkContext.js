@@ -12,19 +12,19 @@ export const BookmarkProvider = ({ children }) => {
 
   useEffect(() => {
     const token = Cookies.get("token");
-    fetch("http://localhost:4080/api/collegecart", {
+    fetch(`http://localhost:4080/api/collegecart`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         token: token,
       },
     })
-      .then((response) => response.jsn())
+      .then((response) => response.json())
       .then((data) => {
         if (data.success) {
           setBookMarkCollege(data.savedColleges);
           setsetBookMarkId(data);
-          setBookMarkLength(bookmarkcollege.length);
+          setBookMarkLength(data.savedColleges.length);
         } else {
           // Handle the case where data.success is false (API call was not successful)
           console.error("Error fetching bookmarked colleges");
@@ -33,15 +33,15 @@ export const BookmarkProvider = ({ children }) => {
       .catch((error) => {
         console.error("Error fetching bookmarked colleges:", error);
       });
-  }, []);
+  }, [bookmarkcollege]);
 
   useEffect(() => {
     setBookMarkLength(bookmarkcollege.length);
-  }, [bookmarkcollege]);
+  }, [bookmarkcollege.length]); // Include the dependency in the array
 
   return (
     <BookmarkContext.Provider
-      value={{ bookMarkLength, setBookMarkLength, bookMarkId }}
+      value={{ bookMarkLength, bookmarkcollege, setBookMarkLength, bookMarkId }}
     >
       {children}
     </BookmarkContext.Provider>

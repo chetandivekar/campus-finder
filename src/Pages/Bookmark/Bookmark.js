@@ -3,43 +3,26 @@ import { Link } from "react-router-dom";
 import "./Bookmark.css";
 import Dot from "../College/collegeImages/dot.svg";
 import Location from "../College/collegeImages/location.svg";
-import Cookies from "js-cookie";
 import CollegeSkeleton from "../College/CollegeSkeleton";
+import { useBookmarkContext } from "../../context/bookMarkContext";
 
 const Bookmark = () => {
-  const [filteredColleges, setFilteredColleges] = useState([]);
   const [showSkeleton, setShowSkeleton] = useState(true);
+  const [savedColleges, setSavedColleges] = useState([]);
+
+  // Saved college Context
+  const { bookmarkcollege } = useBookmarkContext();
 
   useEffect(() => {
-    const token = Cookies.get("token");
-    fetch("http://localhost:4080/api/collegecart", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        token: token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setFilteredColleges(data.savedColleges);
-        } else {
-          // Handle the case where data.success is false (API call was not successful)
-          console.error("Error fetching bookmarked colleges");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching bookmarked colleges:", error);
-      });
-  }, []);
+    setSavedColleges(bookmarkcollege);
+  }, [bookmarkcollege]);
 
   useEffect(() => {
     setTimeout(() => {
       setShowSkeleton(false);
-    }, 2500);
-  }, [filteredColleges]);
+    }, 1000);
+  }, [bookmarkcollege]);
 
-  console.log(filteredColleges);
   return (
     <div className="mains">
       <div className="lists">
@@ -51,8 +34,8 @@ const Bookmark = () => {
         <div className="college-list">
           {showSkeleton ? (
             <CollegeSkeleton cards={8} />
-          ) : filteredColleges.length > 0 ? (
-            filteredColleges.map((college) => (
+          ) : savedColleges.length > 0 ? (
+            savedColleges.map((college) => (
               <div className="college-card" key={college._id}>
                 <div className="rank">
                   <div className="rank-ranks">{college.college.ranking}</div>

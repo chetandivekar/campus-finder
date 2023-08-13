@@ -114,19 +114,17 @@ export default function College() {
   const handleFeesChange = (event) => {
     const { value } = event.target;
     setSelectedFees(value);
-    console.log(value);
   };
 
   useEffect(() => {
     filterColleges();
-    console.log(filterColleges);
+
     // eslint-disable-next-line
   }, [selectedLocation, selectedFees, selectedOwnership]);
 
   const handleOwnershipChange = (event) => {
     const { value } = event.target;
     setSelectedOwnership(value);
-    console.log(value);
   };
 
   const handleSpecializationChange = (event) => {
@@ -669,7 +667,6 @@ export default function College() {
                 onKeyPress={(event) => {
                   if (event.key === "Enter") {
                     filterColleges();
-                    console.log(filterColleges);
                   }
                 }}
                 placeholder="Search..."

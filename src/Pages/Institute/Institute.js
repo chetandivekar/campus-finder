@@ -153,7 +153,6 @@ const Institute = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Review submitted:", data);
         setRating(null);
         setComment("");
       })
@@ -190,7 +189,6 @@ const Institute = () => {
     e.preventDefault();
     const token = Cookies.get("token");
     const collegeId = selectedCollege._id;
-    console.log("collegeid" + collegeId);
 
     if (isCollegeSaved) {
       // If the college is already saved, remove it from the savedColleges array
@@ -205,7 +203,6 @@ const Institute = () => {
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log("College removed from bookmarks:", data);
             // Update the state to reflect that the college is no longer saved
             setIsCollegeSaved(false);
           })
@@ -226,7 +223,6 @@ const Institute = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("College added to bookmarks:", data);
           // Update the state to reflect that the college is now saved
           setIsCollegeSaved(true);
         })
