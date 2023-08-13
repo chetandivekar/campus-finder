@@ -8,26 +8,19 @@ import Search from "./collegeImages/search.svg";
 import usePageTitle from "../layout/metaData";
 import { Link } from "react-router-dom";
 import CollegeSkeleton from "./CollegeSkeleton";
-// import colleges from "./college_api";
-
-// export default function College() {
-//   const colleges = useCollegeContext();
-
-// const [selectedLocation, setSelectedLocation] = useState("");
+import { useCollegeContext } from "../../context/collegeContext";
 
 export default function College() {
   // page title
   const pageTitle = "colleges | campusFinder";
   usePageTitle(pageTitle);
-  useEffect(() => {
-    fetch("http://localhost:4080/api/colleges")
-      .then((response) => response.json())
-      .then((data) => setColleges(data))
-      .catch((error) => console.error("Error fetching colleges:", error));
-  }, []);
 
-  const [colleges, setColleges] = useState([]);
+  //calling collegs from the context
+  const colleges = useCollegeContext();
+
+  // const [colleges, setColleges] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [loading, setLoading] = useState(false);
   const [selectedOwnership, setSelectedOwnership] = useState("");
   const [selectedFees, setSelectedFees] = useState("");
   const [selectedSpecialization, setSelectedSpecialization] = useState("");
@@ -38,110 +31,13 @@ export default function College() {
   const [isSpecializationExpanded, setIsSpecializationExpanded] =
     useState(true);
   const [isExamExpanded, setIsExamExpanded] = useState(true);
-  const [showSkeleton, setShowSkeleton] = useState(true);
   const [filteredColleges, setFilteredColleges] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     setFilteredColleges(colleges.collegeList || []);
   }, [colleges]);
-  useEffect(() => {
-    setFilteredColleges(colleges.collegeList || []);
-    setTimeout(() => {
-      setShowSkeleton(false);
-    }, 400);
-  }, [colleges]);
 
-  //   let filtered = colleges;
-
-  //   if (selectedLocation.length > 0) {
-  //     filtered = filtered.filter(
-  //       (college) =>
-  //         college.Location &&
-  //         college.Location.toLowerCase().includes(
-  //           selectedLocation.toLowerCase()
-  //         )
-  //     );
-  //   }
-
-  //   setFilteredColleges(filtered);
-  // };
-
-  // const handleLocationChange = (event) => {
-  //   const { value } = event.target;
-  //   setSelectedLocation(value);
-  // };
-
-  // useEffect(() => {
-  //   filterColleges();
-  // }, [selectedLocation]);
-
-  // useEffect(() => {
-  //   const filterColleges = () => {
-  //     let filtered = filteredColleges;
-
-  //     // Filter by location
-  //     if (selectedLocation.length > 0) {
-  //       filtered = filtered.filter(
-  //         (college) =>
-  //           college.location &&
-  //           college.location.city &&
-  //           college.location.city
-  //             .toLowerCase()
-  //             .includes(selectedLocation.toLowerCase())
-  //       );
-  //     }
-
-  //     // Filter by fees range
-  //     if (selectedFees.length > 0) {
-  //       filtered = filtered.filter((college) => {
-  //         if (college["Course Offered"]) {
-  //           const courseFees = parseInt(
-  //             college["Course Offered"][0].replace(/,/g, "")
-  //           );
-  //           const [lowerRange, upperRange] = selectedFees.split("-");
-
-  //           if (selectedFees === "1 Lakh") {
-  //             return courseFees < 100000;
-  //           } else if (selectedFees === "6 Lakh") {
-  //             return courseFees > 600000;
-  //           } else if (upperRange) {
-  //             return (
-  //               courseFees >= parseInt(lowerRange) * 100000 &&
-  //               courseFees <= parseInt(upperRange) * 100000
-  //             );
-  //           }
-  //         }
-  //         return false;
-  //       });
-  //     }
-
-  //     // Filter by ownership
-  //     if (selectedOwnership.length > 0) {
-  //       filtered = filtered.filter(
-  //         (college) =>
-  //           college.Ownership &&
-  //           college.Ownership.toLowerCase() === selectedOwnership.toLowerCase()
-  //       );
-  //     }
-
-  //     // Filter by search query
-  //     if (searchQuery.length > 0) {
-  //       filtered = filtered.filter((college) =>
-  //         college.name.toLowerCase().includes(searchQuery.toLowerCase())
-  //       );
-  //     }
-
-  //     setFilteredColleges(filtered);
-  //   };
-
-  //   filterColleges(); // Initial filter when the dependencies change
-  // }, [
-  //   filteredColleges,
-  //   selectedLocation,
-  //   selectedFees,
-  //   selectedOwnership,
-  //   searchQuery,
-  // ]);
+  //Filter Function
 
   const filterColleges = () => {
     let filtered = colleges.collegeList || [];
@@ -192,6 +88,11 @@ export default function College() {
       filtered = filtered.filter((college) =>
         college.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
+      if (filtered.length <= 0) {
+        setLoading(true);
+      }
+    } else if (searchQuery === " ") {
+      filtered = colleges.collegeList || [];
     }
     if (searchQuery.length === 0) {
       setFilteredColleges(colleges.collegeList || []);
@@ -778,9 +679,7 @@ export default function College() {
           </div>
 
           <div className="college-list">
-            {showSkeleton ? (
-              <CollegeSkeleton cards={8} />
-            ) : filteredColleges.length > 0 ? (
+            {filteredColleges.length > 0 ? (
               filteredColleges.map((college, index) => (
                 <div className="college-card" key={index}>
                   <div className="rank">
@@ -847,8 +746,10 @@ export default function College() {
                   </div>
                 </div>
               ))
+            ) : loading ? (
+              <p>No college found</p>
             ) : (
-              <p>No College Foud</p>
+              <CollegeSkeleton cards={8} />
             )}
           </div>
         </div>
