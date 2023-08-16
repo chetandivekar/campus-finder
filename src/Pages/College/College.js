@@ -42,15 +42,6 @@ export default function College() {
   const filterColleges = () => {
     let filtered = colleges.collegeList || [];
 
-    // Filter by location
-    if (selectedLocation) {
-      filtered = filtered.filter(
-        (college) =>
-          college.location &&
-          college.location.city &&
-          college.location.city.toLowerCase() === selectedLocation.toLowerCase()
-      );
-    }
 
     // Filter by fees range
     if (selectedFees.length > 0) {
@@ -74,6 +65,16 @@ export default function College() {
       });
     }
 
+
+      // Filter by location
+      if (selectedLocation) {
+        filtered = filtered.filter(
+          (college) =>
+            college.location &&
+            college.location.city &&
+            college.location.city.toLowerCase() === selectedLocation.toLowerCase()
+        );
+      }
     //Filter by ownership
     if (selectedOwnership.length > 0) {
       filtered = filtered.filter(

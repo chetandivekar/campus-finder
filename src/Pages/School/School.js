@@ -20,16 +20,19 @@ const School = () => {
   const [School, setSchool] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedOwnership, setSelectedOwnership] = useState("");
-  const [selectedFees, setSelectedFees] = useState("");
-  const [selectedBoard, setselectedBoard] = useState("");
+  const [selectedBoard, setSelectedBoard] = useState("");
   const [isOwnershipExpanded, setIsOwnershipExpanded] = useState(true);
   const [isLocationExpanded, setIsLocationExpanded] = useState(true);
-  const [isFeesExpanded, setIsFeesExpanded] = useState(true);
+  const [isFeesExpanded, setIsFeesExpanded] = useState(false);
+  const [selectedFees, setSelectedFees] = useState("");
+  const [isBoardExpanded, setIsBoardExpanded] = useState(true);
+
 
   const [schools, setSchools] = useState([]);
 
   const host = "http://localhost:";
   const port = process.env.REACT_APP_PORT;
+
 
   useEffect(() => {
     fetch(`${host}${port}/api/school`)
@@ -38,7 +41,6 @@ const School = () => {
       .catch((error) => console.error("Error fetching colleges:", error));
   }, []);
 
-  const [isBoardExpanded, setisBoardExpanded] = useState(true);
   const [FilteredSchool, setFilteredSchool] = useState(School);
   const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
@@ -50,7 +52,6 @@ const School = () => {
 
   const filterSchools = () => {
     let filtered = School.schoolList || [];
-    // console.log(filtered);
 
     // Filter by location
     if (selectedLocation) {
@@ -60,12 +61,25 @@ const School = () => {
           school.location.city &&
           school.location.city.toLowerCase() === selectedLocation.toLowerCase()
       );
+  
+    }
+    // filter by fees
+    if (selectedFees) {
+      filtered = filtered.filter((school) => {
+        console.log(school);
+        return (
+          school.fees &&
+          typeof school.fees === "string" && // Check if school.fees is a string
+          school.fees.toLowerCase().includes(selectedFees.toLowerCase())
+        );
+      });
     }
 
     //Filter by ownership
-    if (selectedOwnership.length > 0) {
+    if (selectedOwnership) {
       filtered = filtered.filter((school) => {
-        const typeOfSchool = school.type_Of_school && school.type_Of_school[0];
+        const typeOfSchool = school.type_Of_school[0];
+        // console.log("database",typeOfSchool);
         return (
           typeOfSchool &&
           typeOfSchool.toLowerCase() === selectedOwnership.toLowerCase()
@@ -79,17 +93,36 @@ const School = () => {
         school.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
+    // board filter
+
+    if (selectedBoard) {
+      filtered = filtered.filter(
+        (school) =>
+          school.type_Of_board &&
+          school.type_Of_board.includes(selectedBoard)
+      );
+    }
 
     setFilteredSchool(filtered);
   };
   useEffect(() => {
     filterSchools();
-  }, [selectedLocation, selectedFees, selectedOwnership]);
-
+  }, [selectedLocation, selectedFees, selectedOwnership,selectedBoard]);
+ 
+  const handleBoardChange = (event) => {
+    const { value } = event.target;
+    setSelectedBoard((prevSelected) =>
+      prevSelected === value ? "" : value
+    );
+  };
+  
+  
   const handleFeesChange = (event) => {
     const { value } = event.target;
     setSelectedFees((prevSelected) => (prevSelected === value ? "" : value));
+    // filterSchools(); // Call the filter function after changing fees
   };
+  
 
   const handleLocationChange = (event) => {
     const { value } = event.target;
@@ -101,17 +134,14 @@ const School = () => {
     const { value } = event.target;
     setSearchQuery(value);
   };
-  const handleOwnershipChange = (event) => {
+  const handleOwnershipFilterChange = (event) => {
     const { value } = event.target;
     setSelectedOwnership((prevSelected) =>
       prevSelected === value ? "" : value
     );
   };
 
-  const handleBoardChange = (event) => {
-    const { value } = event.target;
-    setselectedBoard((prevSelected) => (prevSelected === value ? "" : value));
-  };
+ 
 
   const toggleOwnershipExpand = () => {
     setIsOwnershipExpanded((prevState) => !prevState);
@@ -126,7 +156,7 @@ const School = () => {
   };
 
   const toggleBoardExpand = () => {
-    setisBoardExpanded((prevState) => !prevState);
+    setIsBoardExpanded((prevState) => !prevState);
   };
   const renderSelectedFilters = () => {
     const selectedFilters = [];
@@ -176,7 +206,7 @@ const School = () => {
       selectedFilters.push(
         <span
           className="selected-option"
-          onClick={() => setselectedBoard("")}
+          onClick={() => setSelectedBoard("")}
           key="specialization"
         >
           {selectedBoard}
@@ -196,11 +226,11 @@ const School = () => {
     setSelectedLocation("");
     setSelectedOwnership("");
     setSelectedFees("");
-    setselectedBoard("");
+    setSelectedBoard("");
     setIsOwnershipExpanded(true);
     setIsLocationExpanded(true);
     setIsFeesExpanded(true);
-    setisBoardExpanded(true);
+    setIsBoardExpanded(true);
     setFilteredSchool(School || []);
   };
 
@@ -243,7 +273,7 @@ const School = () => {
                 )}
               </div>
               <div className="filters">
-                <div className="ownership">
+                {/* <div className="ownership">
                   <div
                     className={`dropdown ${
                       isOwnershipExpanded ? "expanded" : ""
@@ -266,7 +296,7 @@ const School = () => {
                               name="ownership"
                               value="Public"
                               checked={selectedOwnership === "Public"}
-                              onChange={handleOwnershipChange}
+                              onChange={handleOwnershipFilterChange}
                             />
                             <label htmlFor="public" className="checkbox-label">
                               Public
@@ -280,7 +310,7 @@ const School = () => {
                               value="Private"
                               onClick={filterSchools}
                               checked={selectedOwnership === "Private"}
-                              onChange={handleOwnershipChange}
+                              onChange={handleOwnershipFilterChange}
                             />
                             <label htmlFor="private" className="checkbox-label">
                               Private
@@ -290,7 +320,49 @@ const School = () => {
                       )}
                     </div>
                   </div>
-                </div>
+                </div> */}
+                <div className="ownership">
+  <div className={`dropdown ${isOwnershipExpanded ? "expanded" : ""}`}>
+    <label htmlFor="ownership">Ownership:</label>
+    <div>
+      <button className="toggle-button" onClick={toggleOwnershipExpand}>
+        {isOwnershipExpanded ? "▲" : "▼"}
+      </button>
+      {isOwnershipExpanded && (
+        <div className="options">
+          <div className="option">
+            <input
+              type="checkbox"
+              id="public"
+              name="ownership"
+              value="public"
+              checked={selectedOwnership === "public"}
+              onChange={handleOwnershipFilterChange}
+            />
+            <label htmlFor="public" className="checkbox-label">
+              Public
+            </label>
+          </div>
+          <div className="option">
+            <input
+              type="checkbox"
+              id="private"
+              name="ownership"
+              value="private"
+              checked={selectedOwnership === "private"}
+              onChange={handleOwnershipFilterChange}
+            />
+            <label htmlFor="private" className="checkbox-label">
+              Private
+            </label>
+          </div>
+          {/* Add more ownership options as needed */}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
                 <div className="line"></div>
                 <div className="location">
                   <div>
@@ -565,97 +637,78 @@ const School = () => {
                   type="text"
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  onKeyPress={(event) => {
-                    if (event.key === "Enter") {
-                      filterSchools();
-                    }
-                  }}
                   placeholder="Search..."
                 />
                 <button onClick={filterSchools}>Search</button>
               </div>
             </div>
+            
             <div className="school-list">
-              {FilteredSchool.length > 0 ? (
-                FilteredSchool.map((School, index) => (
-                  <div class="school-card">
-                    <div class="rank">
-                      <div class="rank-ranks">{index + 1}</div>
-                      <div class="rank-ranking-institute">
-                        <div>SR .NO</div>
-                      </div>
-                    </div>
-                    <div class="image">
-                      <img
-                        src="https://images.shiksha.com/mediadata/images/1605086820phpSFQlAR.jpg  "
-                        alt="School_logo"
-                      />
-                    </div>
-                    <div class="collge-info">
-                      <Link to={`/schools/${School.name}`}>
-                        <div class="collge-name">{School.name}</div>
-                      </Link>
-                      <div class="info-two">
-                        <div class="locations">
-                          <div class="img">
-                            <img
-                              src="/static/media/location.c158d9fd56fc42a0845ff70178f1a02d.svg"
-                              alt="location"
-                            />
-                          </div>
-                          <div class="address">{School.location.city}</div>
-                        </div>
-                        <div class="verticalline">|</div>
-                        <div class="rating">
-                          <div class="rate">{School.ratings}</div>
-                          <div class="star-rating">
-                            {Array.from(
-                              { length: Math.floor(School.ratings) },
-                              (_, i) => (
-                                <span className="star" key={i}></span>
-                              )
-                            )}
-                          </div>
-                        </div>
-                        <div class="verticalline">|</div>
-                        <div class="School-fees">
-                          <span>Fees:</span> {School.fees}
-                        </div>
-                      </div>
-                      <div class="info-three">
-                        <div class="salary">
-                          <span>Ownership:</span> {School.type_Of_school}
-                        </div>
-                      </div>
-                      <div class="info-four">
-                        <div class="admission">
-                          <a href="/Schools/Indian Institute of Technology Bombay">
-                            Board : <span>{School.type_Of_board}</span>
-                          </a>
-                        </div>
-                        <div class="dot">
-                          <img
-                            src="/static/media/dot.3ee289e691f42e4e0c9708dce5716bbe.svg"
-                            alt="dot"
-                          />
-                        </div>
-                        <a href="/Schools/Indian Institute of Technology Bombay">
-                          Courses &amp; Fees
-                        </a>
-                        <div class="dot">
-                          <img
-                            src="/static/media/dot.3ee289e691f42e4e0c9708dce5716bbe.svg"
-                            alt="dot"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No colleges found.</p>
-              )}
+  {FilteredSchool.length > 0 ? (
+    FilteredSchool.map((school, index) => (
+      <div class="school-card" key={school._id}>
+        <div class="rank">
+          <div class="rank-ranks">{index + 1}</div>
+          <div class="rank-ranking-institute">
+            <div>SR .NO</div>
+          </div>
+        </div>
+        <div class="image">
+          <img src={school.images.logo_img} alt="School_logo" />
+        </div>
+        <div class="collge-info">
+          <Link to={`/schools/${school.name}`}>
+            <div class="collge-name">{school.name}</div>
+          </Link>
+          <div class="info-two">
+            <div class="locations">
+              <div class="img">
+                <img
+                  src="/static/media/location.c158d9fd56fc42a0845ff70178f1a02d.svg"
+                  alt="location"
+                />
+              </div>
+              <div class="address">{school.location.city}</div>
             </div>
+            <div class="verticalline">|</div>
+            <div class="rating">
+              <div class="rate">{school.ratings}</div>
+              <div class="star-rating">
+                {Array.from({ length: Math.floor(school.ratings) }, (_, i) => (
+                  <span className="star" key={i}></span>
+                ))}
+              </div>
+            </div>
+            <div class="verticalline">|</div>
+            <div class="School-fees">
+              <span>Fees:</span> {school.fees}
+            </div>
+          </div>
+          <div class="info-three">
+            <div class="salary">
+              <span>Ownership:</span> {school.type_Of_school[0]}
+            </div>
+          </div>
+          <div class="info-four">
+            <div class="admission">
+              <a href={`/schools/${school.name}`}>Board : <span>{school.type_Of_board.join(', ')}</span></a>
+            </div>
+            <div class="dot">
+              <img src="/static/media/dot.3ee289e691f42e4e0c9708dce5716bbe.svg" alt="dot" />
+            </div>
+            <a href={`/schools/${school.name}`}>Courses & Fees</a>
+            <div class="dot">
+              <img src="/static/media/dot.3ee289e691f42e4e0c9708dce5716bbe.svg" alt="dot" />
+            </div>
+          </div>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p>No School found.</p>
+  )}
+</div>
+
           </div>
         </div>
       </div>
