@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../Singleschool/SingleSchool.css"
+import "../Singleschool/SingleSchool.css";
 import "../Institute/Institute.css";
 import Mail from "../Institute/Institute_logo/image 17.png";
 import Rating from "../Institute/Institute_logo/image 18.png";
@@ -9,11 +9,12 @@ import { useParams } from "react-router-dom";
 import Skeleton from "../College/SingleCollegeSkeleton";
 import { FaStar } from "react-icons/fa";
 import Cookies from "js-cookie";
-import Banner from "../Institute/Institute_logo/download.png"
-import logo from "../Institute/Institute_logo/viva-institute-of-technology-vit-thane.jpg"
+import Banner from "../Institute/Institute_logo/download.png";
+import logo from "../Institute/Institute_logo/viva-institute-of-technology-vit-thane.jpg";
 
 const SingleSchool = () => {
   const { schoolName } = useParams();
+  const [contactArray, setContactArray] = useState([]);
   const [schools, setSchools] = useState([]);
   const ref = useRef(null);
   const ref1 = useRef(null);
@@ -24,9 +25,11 @@ const SingleSchool = () => {
   const [bookmarkcollege, setBookMarkCollege] = useState([]);
   const [isCollegeSaved, setIsCollegeSaved] = useState(false);
 
-  // useEffect(() => {
-  //   setFilteredSchool(schools.schoolList || []);
-  // }, [schools]);
+  // useEffect(()=>{
+  //   const numbersArray = selectedSchool.contact_information.school_contact.split('').map(Number);
+  //   return setContactArray(numbersArray);
+  // },[]
+  // )
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -184,7 +187,9 @@ const SingleSchool = () => {
               <div className="contact-img common-head">Phone: </div>
               <div className="contact-detail common-main">
                 <h4>
-                  <span> {selectedSchool.contact_information.school_contact}</span>
+                  {/* <span>First Value: {contactArray[0]}</span>
+                  <span>Second Value:{contactArray[1]}</span> */}
+                <span>{selectedSchool.contact_information.school_contact}</span>
                 </h4>
               </div>
             </div>
@@ -198,7 +203,9 @@ const SingleSchool = () => {
               </div>
             </div>
             <div className="button-to-webite">
-              <button className="btn" style={{width:"15rem"}}>Go To School Website</button>
+              <button className="btn" style={{ width: "15rem" }}>
+                Go To School Website
+              </button>
             </div>
           </div>
         </div>
