@@ -21,16 +21,18 @@ const SingleSchool = () => {
   const [hover, setHover] = useState(null);
   const [comment, setComment] = useState("");
   const [filteredSchool, setFilteredSchool] = useState([]);
-  const [bookmarkcollege, setBookMarkCollege] = useState([]);
-  const [isCollegeSaved, setIsCollegeSaved] = useState(false);
+  const [bookmarkschool, setBookmarkschool] = useState([]);
+  const [isSchoolSaved, setIsSchoolSaved] = useState(false);
 
-  // useEffect(() => {
-  //   setFilteredSchool(schools.schoolList || []);
-  // }, [schools]);
+  useEffect(() => {
+    setFilteredSchool(schools.schoolList || []);
+  }, [schools]);
+  const [filteredschoolss, setFilteredschoolss] = useState([]);
+  const [bookmarkObject, setBookmarkObject] = useState({});
 
   useEffect(() => {
     const token = Cookies.get("token");
-    fetch("http://localhost:4080/api/school", {
+    fetch("http://localhost:4080/api/schoolcart/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -39,8 +41,9 @@ const SingleSchool = () => {
     })
       .then((response) => response.json())
       .then((data) => {
+        // console.log("saved data", data);
         if (data.success) {
-          setFilteredSchool(data.schoolList);
+          setFilteredschoolss(data.savedSchools);
         } else {
           // Handle the case where data.success is false (API call was not successful)
           console.error("Error fetching bookmarked colleges");
@@ -51,24 +54,65 @@ const SingleSchool = () => {
       });
   }, []);
   const selectedSchool = filteredSchool.find(
+    // (school)=>console.log("Schoolname",school)
     (school) => school.name === schoolName
   );
-  if (!selectedSchool) {
-    return (
-      <div className="container mx-auto">
-        <Skeleton />
-      </div>
-    );
-  }
-  const getModal = () => {
-    ref.current.click();
-  };
-  const closeModal = () => {
-    ref1.current.click();
-  };
+  useEffect(() => {
+    const fetchBookmarkedSchool = async () => {
+      try {
+        const token = Cookies.get("token");
+        const response = await fetch("http://localhost:4080/api/schoolcart/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          // console.log("API data:", data); // Log the entire API response
+          const isSaved = data.savedSchools.some((bookmark) => {
+            // console.log("Bookmark object:", bookmark); // Log each bookmark object
+            return bookmark && bookmark.school && bookmark.school.name === schoolName;
+          });
+          setBookmarkschool(data.savedSchools);
+          setIsSchoolSaved(isSaved);
+        } else {
+          console.error("Error fetching bookmarked schools");
+          // Handle the case where the API call was not successful
+        }
+      } catch (error) {
+        console.log("Error fetching bookmarked schools:", error);
+      }
+    };
+    
+
+    fetchBookmarkedSchool();
+  }, [selectedSchool, bookmarkschool]);
+
   const handleCommentChange = (e) => {
     setComment(e.target.value);
   };
+useEffect(() => {
+    // Find the bookmark object that matches the selected college id
+    if (selectedSchool && filteredschoolss.length > 0) {
+      const bookmarkedSchool = filteredschoolss.find(
+        (bookmark) =>
+          bookmark.school && bookmark.school._id === selectedSchool._id
+      );
+
+      setBookmarkObject(bookmarkedSchool);
+    }
+  }, [selectedSchool, filteredschoolss]);
+  // if (!selectedSchool) {
+  //   return (
+  //     <div className="container mx-auto">
+  //       <Skeleton />
+  //     </div>
+  //   );
+  // }
+ 
   const handleSubmit = (e) => {
     e.preventDefault();
     const review = {
@@ -88,7 +132,7 @@ const SingleSchool = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Review submitted:", data);
+        // console.log("Review submitted:", data);
         setRating(null);
         setComment("");
       })
@@ -99,7 +143,72 @@ const SingleSchool = () => {
     window.location.reload();
     closeModal();
   };
+  useEffect(() => {
+    fetch("http://localhost:4080/api/school")
+      .then((response) => response.json())
+      .then((data) => setSchools(data))
+      .catch((error) => console.error("Error fetching colleges:", error));
+  }, []);
 
+  if (!selectedSchool) {
+    return (
+      <div className="container mx-auto">
+        <Skeleton />
+      </div>
+    );
+  }
+  const getModal = () => {
+    ref.current.click();
+  };
+  const closeModal = () => {
+    ref1.current.click();
+  };
+  const handleBookmark = (e) => {
+    e.preventDefault();
+    const token = Cookies.get("token");
+    const schoolId = selectedSchool._id;
+
+    if (isSchoolSaved) {
+      // If the college is already saved, remove it from the savedColleges array
+      if (bookmarkObject && bookmarkObject._id) {
+        const bookmarkIdToRemove = bookmarkObject._id;
+        fetch(`http://localhost:4080/api/collegecart/${bookmarkIdToRemove}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Update the state to reflect that the college is no longer saved
+            setIsSchoolSaved(false);
+          })
+          .catch((error) => {
+            console.error("Error removing college from bookmarks:", error);
+          });
+      } else {
+        console.error("Bookmark object or bookmark ID not found.");
+      }
+    } else {
+      // If the college is not saved, add it to the savedColleges array
+      fetch(`http://localhost:4080/api/collegecart/${schoolId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Update the state to reflect that the college is now saved
+          setIsSchoolSaved(true);
+        })
+        .catch((error) => {
+          console.error("Error adding college to bookmarks:", error);
+        });
+    }
+  };
   return (
     <div style={{ backgroundColor: "#F3F2EF" }}>
       <div class="institute-main ">
@@ -140,10 +249,17 @@ const SingleSchool = () => {
                 </div>
               </div>
             </div>
-            <button className="btn save-btn border-2 border-red-900">
-              <i class="fa-regular fa-bookmark">
-                <span className="ml-2">SAVE</span>
-              </i>
+            <button
+              style={{ background: "#FFF" }}
+              onClick={handleBookmark}
+              className="btn saves-btn "
+            >
+              <i
+                className={
+                  isSchoolSaved ? "fa fa-bookmark" : "fa-regular fa-bookmark"
+                }
+              ></i>
+              <span>{isSchoolSaved ? "Saved" : "Save"}</span>
             </button>
           </div>
         </div>

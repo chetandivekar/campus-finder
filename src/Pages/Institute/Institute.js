@@ -38,6 +38,7 @@ const Institute = () => {
     })
       .then((response) => response.json())
       .then((data) => {
+        // console.log("saved data", data);
         if (data.success) {
           setFilteredCollegess(data.savedColleges);
         } else {
@@ -51,6 +52,7 @@ const Institute = () => {
   }, []);
 
   const selectedCollege = filteredColleges.find(
+    // (college)=>console.log("cole",college)
     (college) => college.name === collegeName
   );
   useEffect(() => {
@@ -68,7 +70,9 @@ const Institute = () => {
         if (response.ok) {
           const data = await response.json();
           const isSaved = data.savedColleges.some(
-            (bookmark) => bookmark.college.name === collegeName
+            // (bookmark)=>console.log("college",bookmark)
+            (bookmark) =>  bookmark.college.name === collegeName
+      
           );
           setBookMarkCollege(data.savedColleges);
 
